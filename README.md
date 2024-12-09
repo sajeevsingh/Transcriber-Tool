@@ -84,3 +84,10 @@ Open your browser and navigate to:
 http://127.0.0.1:5000/
 ```
 
+### **Latest Update**
+- **Added Hindi Transcription Support**: Users can now transcribe Hindi audio files with improved accuracy. The latest update includes:
+  - A dedicated Hindi transcription page.
+  - Support for both file uploads and live audio recordings in Hindi.
+  - Enhanced UI for switching between English, Hindi, and mixed-language transcription.
+
+Check out the updated features and feel free to contribute!
