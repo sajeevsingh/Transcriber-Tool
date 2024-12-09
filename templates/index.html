@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <style>
+        body {
+            background: url('https://source.unsplash.com/1600x900/?technology,audio') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        h1, h2 {
+            font-weight: bold;
+        }
+        .btn {
+            transition: all 0.3s ease-in-out;
+            animation: bounceIn 1s;
+        }
+        .btn:hover {
+            transform: scale(1.1);
+        }
+        #output {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            margin-top: 20px;
+            animation: slideUp 1s ease-in-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        #loader {
+            display: none;
+            margin: 20px auto;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <h1 class="mb-4">🎙️ Welcome to the Audio Transcription Tool 🎧</h1>
+        <h2 class="mb-3">Transcribe What You Say or What You Upload</h2>
+        <p class="mb-4">
+            This tool uses advanced AI technology to convert your audio into text.
+            You can either upload an audio file or record your voice directly on this page.
+        </p>
+
+        <!-- Upload Section -->
+        <div class="mb-4">
+            <label for="fileInput" class="form-label">🎵 Select an audio file:</label>
+            <input type="file" id="fileInput" class="form-control" accept=".mp3,.wav,.m4a,.aac,.ogg">
+            <button class="btn btn-primary mt-3" onclick="uploadFile()">Upload and Transcribe</button>
+        </div>
+
+        <!-- Recording Section -->
+        <div class="mb-4">
+            <label for="recordDuration" class="form-label">🎤 Record Your Voice (seconds):</label>
+            <input type="number" id="recordDuration" class="form-control" value="5" min="1" max="60">
+            <button class="btn btn-success mt-3" onclick="recordAudio()">Record and Transcribe</button>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader"></div>
+
+        <!-- Transcription Output -->
+        <div id="output" class="mt-4" style="display: none;">
+            <h3>Transcription Output:</h3>
+            <p>Your transcription will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('output').style.display = 'none';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function displayTranscription(text) {
+            document.getElementById('output').innerHTML =
+                `<h3>Transcription Output:</h3><p>${text}</p>`;
+            document.getElementById('output').style.display = 'block';
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoader();
+            axios.post('/upload', formData)
+                .then(response => {
+                    hideLoader();
+                    displayTranscription(response.data.transcription);
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error(error);
+                    alert('Failed to transcribe audio.');
+                });
+        }
+
+        function recordAudio() {
+            const duration = document.getElementById('recordDuration').value;
+
+            const formData = new FormData();
+            formData.append('duration', duration);
+
+            showLoader();
+            axios.post('/record', formData)
+                .then(response => {
+                    hideLoader();
+                    displayTranscription(response.data.transcription);
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error(error);
+                    alert('Failed to record or transcribe audio.');
+                });
+        }
+    </script>
+</body>
+</html>
