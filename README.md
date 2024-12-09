@@ -89,5 +89,5 @@ http://127.0.0.1:5000/
   - A dedicated Hindi transcription page.
   - Support for both file uploads and live audio recordings in Hindi.
   - Enhanced UI for switching between English, Hindi, and mixed-language transcription.
-
+Note- If you have a good GPU then for better transcribing update the model code to "large" instead of "small" in app.py ```bash model = whisper.load_model("small") ```
 Check out the updated features and feel free to contribute!
